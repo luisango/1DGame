@@ -13,3 +13,8 @@ int Entity::GetX()
 {
     return m_iX;
 }
+
+void Entity::Update() { }
+void Entity::MoveForward() { }
+void Entity::MoveBackwards() { }
+void Entity::HasCollide() { }

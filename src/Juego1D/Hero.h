@@ -18,6 +18,7 @@ public:
     virtual void Update();
     virtual void MoveForward();
     virtual void MoveBackwards();
+    virtual void HasCollide();
     void ShootRight();
     void ShootLeft();
 };

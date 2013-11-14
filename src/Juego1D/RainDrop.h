@@ -18,6 +18,7 @@ public:
     virtual void Draw();
     virtual void MoveForward();
     virtual void MoveBackwards();
+    virtual void HasCollide();
 };
 
 #endif

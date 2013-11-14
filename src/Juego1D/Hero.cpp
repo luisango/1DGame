@@ -45,3 +45,8 @@ void Hero::ShootLeft()
 
     m_cAvatar = (char)181;
 }
+
+void Hero::HasCollide()
+{
+    m_iX = -1;
+}

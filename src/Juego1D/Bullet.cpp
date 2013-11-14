@@ -6,10 +6,11 @@ Bullet::Bullet(int x, Bullet::BulletDirection direction)
 
 void Bullet::Update()
 {
-    if (m_iDirection == RIGHT)
-        MoveForward();
-    else 
-        MoveBackwards();
+    if (!m_bIsOutOfRange)
+        if (m_iDirection == RIGHT)
+            MoveForward();
+        else 
+            MoveBackwards();
 }
 
 void Bullet::MoveForward()
@@ -35,4 +36,15 @@ void Bullet::MoveBackwards()
 bool Bullet::IsOutOfRange()
 {
 	return m_bIsOutOfRange;
+}
+
+void Bullet::HasCollide()
+{
+    m_bIsOutOfRange = true;
+    m_iX = -1;
+}
+
+Bullet::BulletDirection Bullet::GetDirection()
+{
+	return m_iDirection;
 }

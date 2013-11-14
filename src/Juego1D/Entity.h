@@ -14,10 +14,11 @@ protected:
 public:
     Entity(int x, int speed, char avatar);
 
-    virtual void Update() = 0;
+    virtual void Update();
     virtual void Draw();
-    virtual void MoveForward() = 0;
-    virtual void MoveBackwards() = 0;
+    virtual void MoveForward();
+    virtual void MoveBackwards();
+    virtual void HasCollide();
     int GetX();
 };
 

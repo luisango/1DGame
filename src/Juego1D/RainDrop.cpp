@@ -36,3 +36,5 @@ void RainDrop::Draw()
 void RainDrop::MoveForward() { }
 
 void RainDrop::MoveBackwards() { }
+
+void RainDrop::HasCollide() { }

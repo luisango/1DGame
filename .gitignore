@@ -5,3 +5,4 @@ src/Juego1D/Debug/*
 src/Juego1D/Release/*
 *.sdf
 *.exe
+*.ipch

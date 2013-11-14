@@ -42,8 +42,8 @@ void Game::Update()
 	m_pHero->Update();
 
 	// Update all bullets
-	List<Bullet> * pBullets = m_pBulletManager->GetList();
-    List<Bullet>::Node * pBullet = pBullets->First();
+	List<Bullet> * pBullets              = m_pBulletManager->GetList();
+    List<Bullet>::Node * pBullet         = pBullets->First();
 	List<Bullet>::Node * pBulletToDelete = NULL;
 
     while (pBullet)
@@ -62,25 +62,67 @@ void Game::Update()
 
         pBullet = pBullet->Next();
     }
-
+    
     // Update enemies
     m_pEnemyAI->Update();
 
-    // TODO: COLLISION DETECTION
     // Update all enemies
-	List<Enemy> * pEnemies = m_pEnemyManager->GetList();
-    List<Enemy>::Node * pEnemy = pEnemies->First();
+	List<Enemy> * pEnemies             = m_pEnemyManager->GetList();
+    List<Enemy>::Node * pEnemy         = pEnemies->First();
 	List<Enemy>::Node * pEnemyToDelete = NULL;
 
     while (pEnemy)
     {
+        int enemy_position = pEnemy->Value().GetX();
+
+        // Check collision with bullets
+        pBullet = pBullets->First();
+	    pBulletToDelete = NULL;
+
+        while (pBullet)
+        {
+            int bullet_position                      = pBullet->Value().GetX();
+            Bullet::BulletDirection bullet_direction = pBullet->Value().GetDirection();
+            Enemy::EnemyDirection enemy_direction    = pEnemy->Value().GetDirection();
+
+		    if (bullet_position == -1) {
+			    pBullet = pBullet->Next();
+                continue;
+            } else if (bullet_direction == Bullet::BulletDirection::LEFT) {
+                //if (enemy_direction == Enemy::EnemyDirection::LEFT)
+                    if ((enemy_position > bullet_position - BULLET_SPEED) && (bullet_position > enemy_position))
+                    {
+                        pBullet->Value().HasCollide();
+                        pEnemy->Value().HasCollide();
+                    }
+            } else if (bullet_direction == Bullet::BulletDirection::RIGHT) {
+                //if (enemy_direction == Enemy::EnemyDirection::LEFT)
+                    if ((bullet_position < enemy_position) && (enemy_position < bullet_position + BULLET_SPEED))
+                    {
+                        pBullet->Value().HasCollide();
+                        pEnemy->Value().HasCollide();
+                    }
+            }
+
+            pBullet = pBullet->Next();
+        }
+
+        // Check collision with hero
+        int hero_position = m_pHero->GetX();
+
+        if ((enemy_position > hero_position) && (hero_position > enemy_position + ENEMY_SPEED))
+        {
+            pEnemy->Value().HasCollide();
+            m_pHero->HasCollide();
+        }
+
         pEnemy->Value().Update();
         pEnemy = pEnemy->Next();
     }
 
     // Update all rain drops
-	List<RainDrop> * pRainDrops = m_pRainDropManager->GetList();
-    List<RainDrop>::Node * pRainDrop = pRainDrops->First();
+	List<RainDrop> * pRainDrops              = m_pRainDropManager->GetList();
+    List<RainDrop>::Node * pRainDrop         = pRainDrops->First();
 	List<RainDrop>::Node * pRainDropToDelete = NULL;
 
     while (pRainDrop)
@@ -108,7 +150,7 @@ void Game::Draw()
 		// Draw bullet
 		if (!pToBeDrawn) 
 		{
-			List<Bullet> * pBullets = m_pBulletManager->GetList();
+			List<Bullet> * pBullets      = m_pBulletManager->GetList();
 			List<Bullet>::Node * pBullet = pBullets->First();
 
 			while (pBullet)
@@ -128,8 +170,8 @@ void Game::Draw()
 		if (!pToBeDrawn) 
 		{
             // Update all enemies
-	        List<Enemy> * pEnemies = m_pEnemyManager->GetList();
-            List<Enemy>::Node * pEnemy = pEnemies->First();
+	        List<Enemy> * pEnemies             = m_pEnemyManager->GetList();
+            List<Enemy>::Node * pEnemy         = pEnemies->First();
 	        List<Enemy>::Node * pEnemyToDelete = NULL;
 
             while (pEnemy)
@@ -149,8 +191,8 @@ void Game::Draw()
 		if (!pToBeDrawn) 
 		{
             // Update all rain drops
-	        List<RainDrop> * pRainDrops = m_pRainDropManager->GetList();
-            List<RainDrop>::Node * pRainDrop = pRainDrops->First();
+	        List<RainDrop> * pRainDrops              = m_pRainDropManager->GetList();
+            List<RainDrop>::Node * pRainDrop         = pRainDrops->First();
 	        List<RainDrop>::Node * pRainDropToDelete = NULL;
 
             while (pRainDrop)

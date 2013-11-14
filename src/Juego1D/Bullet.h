@@ -20,7 +20,9 @@ public:
     virtual void Update();
     virtual void MoveForward();
     virtual void MoveBackwards();
+    virtual void HasCollide();
 	bool IsOutOfRange();
+    Bullet::BulletDirection GetDirection();
 };
 
 #endif
