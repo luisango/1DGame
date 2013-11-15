@@ -38,9 +38,6 @@ void Game::Update()
     // Update rain
     m_pRainAI->Update();
 
-	// Update hero
-	m_pHero->Update();
-
 	// Update all bullets
 	List<Bullet> * pBullets              = m_pBulletManager->GetList();
     List<Bullet>::Node * pBullet         = pBullets->First();
@@ -64,7 +61,8 @@ void Game::Update()
     }
     
     // Update enemies
-    m_pEnemyAI->Update();
+    if (m_pHero->IsAlive())
+        m_pEnemyAI->Update();
 
     // Update all enemies
 	List<Enemy> * pEnemies             = m_pEnemyManager->GetList();
@@ -74,6 +72,7 @@ void Game::Update()
     while (pEnemy)
     {
         int enemy_position = pEnemy->Value().GetX();
+        Enemy::EnemyDirection enemy_direction    = pEnemy->Value().GetDirection();
 
         // Check collision with bullets
         pBullet = pBullets->First();
@@ -83,25 +82,22 @@ void Game::Update()
         {
             int bullet_position                      = pBullet->Value().GetX();
             Bullet::BulletDirection bullet_direction = pBullet->Value().GetDirection();
-            Enemy::EnemyDirection enemy_direction    = pEnemy->Value().GetDirection();
 
 		    if (bullet_position == -1) {
 			    pBullet = pBullet->Next();
                 continue;
             } else if (bullet_direction == Bullet::BulletDirection::LEFT) {
-                //if (enemy_direction == Enemy::EnemyDirection::LEFT)
-                    if ((enemy_position > bullet_position - BULLET_SPEED) && (bullet_position > enemy_position))
-                    {
-                        pBullet->Value().HasCollide();
-                        pEnemy->Value().HasCollide();
-                    }
+                if ((enemy_direction == Enemy::EnemyDirection::RIGHT) && (bullet_position <= enemy_position))
+                {
+                    pBullet->Value().HasCollide();
+                    pEnemy->Value().HasCollide();
+                }
             } else if (bullet_direction == Bullet::BulletDirection::RIGHT) {
-                //if (enemy_direction == Enemy::EnemyDirection::LEFT)
-                    if ((bullet_position < enemy_position) && (enemy_position < bullet_position + BULLET_SPEED))
-                    {
-                        pBullet->Value().HasCollide();
-                        pEnemy->Value().HasCollide();
-                    }
+                if ((enemy_direction == Enemy::EnemyDirection::LEFT) && (bullet_position >= enemy_position))
+                {
+                    pBullet->Value().HasCollide();
+                    pEnemy->Value().HasCollide();
+                }
             }
 
             pBullet = pBullet->Next();
@@ -110,15 +106,27 @@ void Game::Update()
         // Check collision with hero
         int hero_position = m_pHero->GetX();
 
-        if ((enemy_position > hero_position) && (hero_position > enemy_position + ENEMY_SPEED))
-        {
-            pEnemy->Value().HasCollide();
-            m_pHero->HasCollide();
+
+        if (enemy_direction == Enemy::EnemyDirection::LEFT) {
+            if (enemy_position != -1)
+                if (enemy_position - ENEMY_SPEED < hero_position) {
+                    pEnemy->Value().HasCollide();
+                    m_pHero->HasCollide();
+                }
+        } else {
+            if (enemy_position != -1)
+                if (enemy_position + ENEMY_SPEED > hero_position) {
+                    pEnemy->Value().HasCollide();
+                    m_pHero->HasCollide();
+                }
         }
 
         pEnemy->Value().Update();
         pEnemy = pEnemy->Next();
     }
+
+	// Update hero
+	m_pHero->Update();
 
     // Update all rain drops
 	List<RainDrop> * pRainDrops              = m_pRainDropManager->GetList();

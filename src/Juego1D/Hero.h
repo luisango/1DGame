@@ -19,6 +19,7 @@ public:
     virtual void MoveForward();
     virtual void MoveBackwards();
     virtual void HasCollide();
+    bool IsAlive();
     void ShootRight();
     void ShootLeft();
 };
